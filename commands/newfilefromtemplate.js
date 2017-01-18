@@ -7,6 +7,9 @@ const path = require('path');
 
 const DATE_TOKEN  = '${DATE}';
 const AUTHOR_TOKEN = '${AUTHOR}';
+const PROJECT_TOKEN = '${PROJECT}';
+const VERSION_TOKEN = '${VERSION}';
+const FILE_TOKEN = '${FILENAME}';
 const NEW_FILE = 'Files: New File';
 const CREATE_TEMPLATE = 'Files: New File Template';
 const EDIT_TEMPLATE = 'Files: Edit File Template';
@@ -33,6 +36,14 @@ function createFile(filepath, data = '', extension = ''){
             let config = vscode.workspace.getConfiguration('templates');
             data = data.replace(AUTHOR_TOKEN, config.Author);
             data = data.replace(DATE_TOKEN, new Date().toDateString());
+            data = data.replace(FILE_TOKEN,filenameWithExt);
+            data = data.replace(VERSION_TOKEN,'v0.0.1');
+            
+            let product_root = vscode.workspace.rootPath.split('/');
+            
+            if (product_root.length > 0) {
+                data = data.replace(PROJECT_TOKEN, product_root[ product_root.length - 1]);
+            }
 
             fs.stat(newFilePath, (err, stats) => {
                 
@@ -121,3 +132,4 @@ function createNewFile(info){
 }
 
 module.exports = createNewFile;
+
